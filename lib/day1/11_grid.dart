@@ -29,24 +29,24 @@ class MyApp extends StatelessWidget {
             ),
             itemCount: labels.length,
             itemBuilder: (context, index){
-              // return Container(
-              //   color: Colors.blue[100 * (index % 4 == 3 ? 2 : 0)],
-              //   child: Center(
-              //       child: Text(
-              //         labels[index],
-              //         style: TextStyle(fontSize: 30),
-              //       ),
-              //   ),
-              // );
-              return ElevatedButton(
-                  onPressed: (){},
-                  child: Center(
-                    child: Text(
+              return Container(
+                color: Colors.blue[100 * (index % 4 == 3 ? 2 : 0)],
+                child: Center(
+                  child: Text(
                     labels[index],
                     style: TextStyle(fontSize: 30),
-                    ),
-                  )
+                  ),
+                ),
               );
+              // return ElevatedButton(
+              //     onPressed: (){},
+              //     child: Center(
+              //       child: Text(
+              //       labels[index],
+              //       style: TextStyle(fontSize: 30),
+              //       ),
+              //     )
+              // );
             }
         ),
       ),
