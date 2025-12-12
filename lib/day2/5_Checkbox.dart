@@ -55,10 +55,6 @@ class _MyAppState extends State<MyApp> {
                     listChanged(imgList[1], value!);
                   }
               ),
-              onTap: (){
-                bool isChecked = checkedList.contains(imgList[1]);
-                listChanged(imgList[1], !isChecked);
-              },
             ),
             ListTile(
               title: Text("html"),
@@ -68,25 +64,7 @@ class _MyAppState extends State<MyApp> {
                     listChanged(imgList[2], value!);
                   }
               ),
-              onTap: (){
-                bool isChecked = checkedList.contains(imgList[2]);
-                listChanged(imgList[2], !isChecked);
-              },
-            ),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: imgList.length
-                ),
-                itemCount: checkedList.length,
-                itemBuilder: (context, index){
-                  return Container(
-                      child: Image.asset(checkedList[index])
-                  );
-                }
               )
-            )
-
           ],
         ),
       ),
