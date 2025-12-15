@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final Random _ran = Random();
+  late Offset position = Offset(_ran.nextDouble() * 300, _ran.nextDouble() * 300);
+
+  void _moveBox() {
+    setState(() {
+      position = Offset(_ran.nextDouble() * 300, _ran.nextDouble() * 300);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left : position.dy,
+                      top : position.dx,
+                      child: Container(
+                        width: 50, height: 50, color: Colors.blue[200],
+                      )
+                    )
+                  ],
+                )
+            ),
+            Container(
+              height: 50, color: Colors.green[200],
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: _moveBox,
+                  child: Text("클릭 시 위치 변경"),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
