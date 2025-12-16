@@ -1,73 +1,71 @@
 import 'package:flutter/material.dart';
-import 'UserList.dart';
+import 'db.dart';
+
 
 class UserEdit extends StatefulWidget {
-  const UserEdit({super.key});
+  final int? userId;
+  UserEdit({super.key, this.userId});
 
   @override
   State<UserEdit> createState() => _UserEditState();
 }
 
 class _UserEditState extends State<UserEdit> {
+  TextEditingController nameCtrl = TextEditingController();
+  TextEditingController ageCtrl = TextEditingController();
 
-  final TextEditingController _nameCtrl = TextEditingController();
-  final TextEditingController _ageCtrl = TextEditingController();
+  Future<void> _selectUser() async{
+    var user = await DB.getUser(widget.userId!);
+    print(user);
+    print(user.first);
+    var info = user.first;
+    setState(() {
+      nameCtrl.text = info["name"];
+      ageCtrl.text = info["age"].toString();
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectUser();
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.yellow[200],
-        title: Text("사용자 수정"),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30),
+        appBar: AppBar(
+          title : Text("사용자 수정"),
+        ),
+        body : Padding(
+          padding: EdgeInsets.all(10),
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextField(
-                controller: _nameCtrl,
+                controller: nameCtrl,
                 decoration: InputDecoration(
-                  labelText: "Name",
-                  hintText: "이름을 입력하세요.",
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.yellow[200],
-                  // enabled: false,
+                    labelText: "Name"
                 ),
               ),
-              SizedBox(height: 10,),
               TextField(
-                controller: _ageCtrl,
+                controller: ageCtrl,
                 decoration: InputDecoration(
-                  labelText: "Age",
-                  hintText: "나이를 입력하세요.",
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.yellow[200],
-                  // enabled: false,
+                    labelText: "Age"
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 20,),
               ElevatedButton(
-                  onPressed: (){
-                    print("입력된 값 : ${_nameCtrl.text}");
-                    print("입력된 값 : ${_ageCtrl.text}");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => UserList()
-                        )
-                    );
+                  onPressed: () async{
+                    DB.updateUser(widget.userId!, nameCtrl.text, int.tryParse(ageCtrl.text)!);
+                    Navigator.pop(context, true);
                   },
-                  child: Text("사용자 추가")
+                  child: Text("수정")
               )
             ],
           ),
-        ),
-      ),
+        )
+
     );
   }
 }

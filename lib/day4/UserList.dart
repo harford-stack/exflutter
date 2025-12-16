@@ -1,52 +1,102 @@
 import 'package:flutter/material.dart';
 import 'UserEdit.dart';
+import 'UserView.dart';
+import 'db.dart';
 
-class UserList extends StatelessWidget {
+class UserList extends StatefulWidget {
   const UserList({super.key});
 
   @override
+  State<UserList> createState() => _UserListState();
+}
+
+class _UserListState extends State<UserList> {
+
+  List<Map<String, dynamic>> list = [];
+
+  Future<void> _selectUserList() async{
+    var userList = await DB.selectUser();
+    setState(() {
+      list = userList;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectUserList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-
-    List<Map<String, Object>> list = [
-      {"userId" : "hong", "name" : "홍길동", "age" : 30},
-      {"userId" : "kim", "name" : "김철수", "age" : 25},
-      {"userId" : "park", "name" : "박영희", "age" : 20}
-    ];
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue[200],
-        title: Text("사용자 목록"),
-      ),
-      body: ListView.builder(
+        appBar: AppBar(title : Text("사용자 목록")),
+        body : ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
+            var user = list[index];
             return ListTile(
-              title: Text("아이디: ${list[index]["userId"].toString()}, 이름: ${list[index]["name"].toString()}"),
-              subtitle: Text("나이: ${list[index]["age"]}"),
+              title : Text("아이디 : ${user["userId"]}, 이름 : ${user["name"]}"),
+              subtitle: Text("나이 : ${user["age"]}"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserView(
+                      userId: user["userId"],
+                    ),
+                  ),
+                );
+              },
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const UserEdit()),
-                      );
-                    },
-                    icon: Icon(Icons.edit)
+                      onPressed: () async{
+                        bool flg = await Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => UserEdit(userId: user["userId"]),));
+                        if(flg) {
+                          _selectUserList();
+                        }
+                      },
+                      icon: Icon(Icons.edit)
                   ),
                   IconButton(
-                    onPressed: (){
-
-                    },
-                    icon: Icon(Icons.delete)
-                  ),
+                      onPressed: (){
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title : Text("삭제"),
+                              content: Text("${user["name"]}님을 정말 삭제 하실거?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () async{
+                                      await DB.deleteUser(user["userId"]);
+                                      Navigator.of(context).pop();
+                                      _selectUserList();
+                                    },
+                                    child: Text("삭제")
+                                ),
+                                TextButton(
+                                    onPressed: (){
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("취소")
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.delete)
+                  )
                 ],
               ),
             );
-          }
-      ),
+          },
+        )
     );
   }
 }
